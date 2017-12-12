@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "961034057229",
+    "firebase_url": "https://jpchat-4961e.firebaseio.com",
+    "project_id": "jpchat-4961e",
+    "storage_bucket": "jpchat-4961e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961034057229:android:a5c27a104162a958",
+        "android_client_info": {
+          "package_name": "ng.org.knowit.jpchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961034057229-35j2596n1q2bgqnt3rkjivtohiu775fr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ng.org.knowit.jpchat",
+            "certificate_hash": "e06f9fff6a0cab493b6b1f23e34bf906420b6d6e"
+          }
+        },
+        {
+          "client_id": "961034057229-5dk8ug47kj40bputau46t03d8g7hf6le.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXJnadc1E1vi40sLc42oxh3xp0gbEPF7Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961034057229-5dk8ug47kj40bputau46t03d8g7hf6le.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
