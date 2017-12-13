@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String ANONYMOUS = "anonymous";
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
+    private static final int RC_PHOTO_PICKER = 2;
 
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
@@ -102,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: Fire an intent to show an image picker
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "complete action using"), RC_PHOTO_PICKER);
+
             }
         });
 
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 // Create and launch sign-in intent
                 if (mFirebaseAuth.getCurrentUser() != null) {
-                    Toast.makeText(MainActivity.this, "Hello You are already signed in", Toast.LENGTH_SHORT).show();
+
                     onSignedInInitialize(user.getDisplayName());
                     // already signed in
                 } else {
@@ -186,12 +192,12 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+               /* if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
                    // showSnackbar(R.string.no_internet_connection);
 
                     return;
-                }
+                } */
 
                 if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                     Toast.makeText(this, "Unkown Error", Toast.LENGTH_SHORT).show();
