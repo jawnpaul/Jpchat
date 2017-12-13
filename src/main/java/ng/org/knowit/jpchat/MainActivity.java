@@ -1,6 +1,7 @@
 package ng.org.knowit.jpchat;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -29,6 +31,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mMessagesDatabaseReference;
     private ChildEventListener mChildEventListener;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mChatPhotosStorageRefence;
 
     private static final int RC_SIGN_IN = 123;
 
@@ -77,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mChatPhotosStorageRefence = mFirebaseStorage.getReference().child("chat_photos");
 
 
 
@@ -182,31 +191,28 @@ public class MainActivity extends AppCompatActivity {
                 //startActivity(SignedInActivity.createIntent(this, response));
 
                 return;
-            } else {
-                // Sign in failed
-                if (response == null) {
+            } else if (response == null) {
                     // User pressed back button
                     Toast.makeText(this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
                     //showSnackbar(R.string.sign_in_cancelled);
                     finish();
                     return;
                 }
+        }
+        else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
+            Uri selectedImageUri = data.getData();
+            //Get a Reference to store file at chat_photos
+            StorageReference photoRef = mChatPhotosStorageRefence.child(selectedImageUri.getLastPathSegment());
 
-               /* if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
-                   // showSnackbar(R.string.no_internet_connection);
-
-                    return;
-                } */
-
-                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                    Toast.makeText(this, "Unkown Error", Toast.LENGTH_SHORT).show();
-                  //  showSnackbar(R.string.unknown_error);
-                    return;
-                }
-            }
-            Toast.makeText(this, "Unknown sign in response", Toast.LENGTH_SHORT).show();
-            //showSnackbar(R.string.unknown_sign_in_response);
+            photoRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            FriendlyMessage friendlymessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
+                            mMessagesDatabaseReference.push().setValue(friendlymessage);
+                        }
+                    });
         }
     }
 
